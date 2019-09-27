@@ -284,3 +284,19 @@ Here are just a few simple ways you can play with the visualization:
    in various ways to query your data. You can find more information
    about CQL from `GeoServer's CQL
    tutorial <http://docs.geoserver.org/2.9.1/user/tutorials/cql/cql_tutorial.html>`__.
+   
+Playing with encoding and compression
+-------------------------------------
+You may pass additional options via ``fs.config`` to influence the behaviour of your chosen ``fs.encoding``
+
+``--fs.encoding orc`` supports e.g.:
+
+ - ``'orc.compress=zlib'`` tells the ORC driver to use zlib for compression (which is default anyway)
+   - others: "none", "snappy", "lzo" (see https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/datasources/orc/OrcOptions.scala#L76)
+ - ``'orc.dictionary.key.threshold=1.0'`` higher->likelier that a column will be of type dictionary, 1 always, 0->never use dictionary
+ - an exhaustive list of options is found in the code: https://github.com/apache/orc/blob/master/java/core/src/java/org/apache/orc/OrcConf.java and https://orc.apache.org/docs/hive-config.html
+ 
+ ``--fs.encoding parquet`` supports e.g.:
+ 
+ - ``'parquet.compression=uncompressed'` tells the parquet driver not to use compression
+   - others: "snappy" (default), "gzip"; the following don't work: "zstd", "lz4", "lzo", "brotli" (from https://github.com/apache/parquet-mr/blob/master/parquet-common/src/main/java/org/apache/parquet/hadoop/metadata/CompressionCodecName.java)
